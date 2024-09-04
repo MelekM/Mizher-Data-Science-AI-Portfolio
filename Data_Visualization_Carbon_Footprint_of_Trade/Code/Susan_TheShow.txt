@@ -1,0 +1,143 @@
+
+
+The countries that participate in OECD tend to be wealthier countries
+and use quite a bit more primary energy per capita,
+
+Non-OECD Country means a country that is not a member of the
+Organisation for Economic Co- operation and Development.
+
+    # import libraries
+    ! pip install xlrd
+
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    %matplotlib inline
+
+    from google.colab import drive
+    drive.mount('/content/drive')
+
+
+
+
+    path = '/content/drive/MyDrive/EggplantGroup_TheShow_Final_Submission/Data/Total Co2 Emission/oecd_non_oecd_total.csv'
+
+    dfNonOecd = pd.read_csv(path)
+
+    dfNonOecd['Partner'] = dfNonOecd['Partner'].replace(["China (People's Republic of)"], 'China (Peoples Republic of)')
+
+    countries = dfNonOecd['Partner'].unique()
+    print(countries)
+
+    listOfCountries= ['Australia', 'Austria', 'Belgium', 'Canada', 'Chile', 'Colombia', 'Costa Rica', 'Czech Republic', 'Denmark', 'Estonia',
+     'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Israel', 'Italy', 'Japan', 'Korea', 'Latvia', 'Lithuania', 'Luxembourg',
+     'Mexico', 'Netherlands', 'New Zealand', 'Norway', 'Poland', 'Portugal',
+     'Slovak Republic', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Türkiye',
+     'United Kingdom', 'United States', 'Argentina', 'Brazil', 'Brunei Darussalam', 'Bulgaria', 'Cambodia', 'China (Peoples Republic of)', 'Croatia', 'Cyprus', 'Hong Kong, China',
+     'India', 'Indonesia', 'Kazakhstan', 'Lao PDR', 'Malaysia', 'Malta', 'Morocco',
+     'Peru', 'Philippines', 'Romania', 'Russian Federation', 'Saudi Arabia',
+     'Singapore', 'South Africa', 'Chinese Taipei', 'Thailand', 'Tunisia',
+     'Viet Nam',  'Myanmar']
+
+     for c in listOfCountries:
+        print(c)
+        
+
+    dfNonOecd.dropna(subset=['Partner'], how='all', inplace=True)
+
+    #drop where partner name is not a country from  the list 
+    notCountry = ['World', 'OECD member countries' , 'Non-OECD economies and aggregates', 'Rest of the World', 'Asia-Pacific Economic Cooperation',
+     'Association of South East Asian Nations', 'Eastern Asia',
+     'European Union (27 countries)', 'European Union (28 countries)',
+     'European Union (15 countries)', 'EU28 excluding EU15',
+     'Euro area (19 countries)', 'Group of Twenty', 'North America', 'Europe',
+     'East and Southeastern Asia' ,'South and Central America', 'Other regions ']
+
+    dfNonOecd2= dfNonOecd[~dfNonOecd.Partner.isin(notCountry)]
+    dfNonOecd2.head(9000)
+    countriesTest = dfNonOecd2['Partner'].unique()
+    print(countriesTest)
+
+    # list of columns in the dataset 
+    NonOecdCol = dfNonOecd.columns
+    print(NonOecdCol)
+
+    #Determine most recent year of Co2 Emission data
+
+
+    NonOecMaxYear = dfNonOecd['Time'].max()
+    print(NonOecMaxYear)
+
+    #Determine top 10 NONOECD COUNTRY CONTRIBUTERS OF CO2 EMISSIONS
+    x= 10
+    NonOecd = dfNonOecd2[ (dfNonOecd2['Time'] == NonOecMaxYear)  & (dfNonOecd2['COU'] == 'NONOECD') & (dfNonOecd2['Industry'] == 'TOTAL')] # select only rows for NONOECD coutntry and max year 
+    print(len(NonOecd)) 
+    NonOecd2= NonOecd.sort_values(by = ['Value'], ascending=[False])
+    NonOecd = NonOecd2.loc[:,['Partner','Time','Value']]  #new_dataset = dataset.loc[:, ['A','D']]
+    NonOecd2.loc[:,['Partner','Time', 'Value']].head(x)
+
+    dfNonOecdGraph = NonOecd2.loc[:,['Partner','Time', 'Value']].head(x)
+    dfNonOecdGraph.head()
+
+    #plot
+    NonOecd2['Percentage']= (NonOecd2['Value']/NonOecd2['Value'].sum() *100).round(2)
+
+    dfNonOecdGraph = NonOecd2.loc[:,['Partner','Time', 'Value', 'Percentage']].head(x)
+    dfNonOecdGraph.head()
+
+
+    fig, ax1 = plt.subplots(figsize=(8, 6))
+    sns.barplot(x='Partner', y='Percentage', data=dfNonOecdGraph, capsize=0.1, ax=ax1,
+                order=None, color='#003BA4')
+    #sns.lineplot(x='variable', y='value', data=dfNonOecdGraph,ax=ax1, color='r', marker='+', linewidth=5, ci=None)
+    plt.xticks(rotation=75)
+    plt.xlabel("") 
+    plt.ylabel("Contribution (in %) to Overall/Global CO2 Emission", font='roboto')
+    plt.rcParams.update({'font.size': 12})
+    g= sns.despine(bottom = True, left = True)# Remove all borders
+
+    plt.show()
+
+    #Determine TOP 10 OECD COUNTRY CONTRIBUTERS TO CO2 EMISSIONS
+    x= 10
+    Oecd = dfNonOecd2[ (dfNonOecd2['Time'] == NonOecMaxYear)  & (dfNonOecd2['COU'] == 'OECD') & (dfNonOecd2['Industry'] == 'TOTAL') ] # select only rows for OECD coutntry and max year 
+    print(len(Oecd)) 
+    Oecd2= Oecd.sort_values(by = ['Value'], ascending=[False])
+    Oecd = Oecd2.loc[:,['Partner','Time','Value']]  
+    Oecd2 = Oecd.drop_duplicates() 
+    #Oecd2.loc[:,['Partner','Time', 'Value']].head(x)
+
+    Oecd2.head(20)
+
+    x= 10
+    Oecd = dfNonOecd2[ (dfNonOecd2['Time'] == NonOecMaxYear)  & (dfNonOecd2['COU'] == 'OECD') & (dfNonOecd2['Industry'] == 'TOTAL') ] # select only rows for OECD coutntry and max year 
+    print(len(Oecd)) 
+    Oecd2= Oecd.sort_values(by = ['Value'], ascending=[False])
+    Oecd = Oecd2.loc[:,['Partner','Time','Value']]  
+    Oecd2 = Oecd.drop_duplicates() 
+    #Oecd2['Percentage'] = 0
+    Oecd2['Percentage']= (Oecd2['Value']/Oecd2['Value'].sum() *100).round(2)
+    Oecd2.loc[:,['Partner','Time', 'Value']].head(x)
+    Oecd2.head() 
+
+
+
+    OecdGraph = Oecd2.loc[:,['Partner','Time', 'Percentage']].head(x)
+    #plot
+    fig, ax1 = plt.subplots(figsize=(8, 6))
+
+    sns.barplot(x='Partner', y='Percentage', data=OecdGraph, capsize=0.1, ax=ax1,
+                order=None, color='#003BA4')
+    plt.xticks(rotation=75)
+    plt.xlabel("") 
+    plt.ylabel("Contribution (in %) to Overall/Global CO2 Emission", font='roboto')
+    plt.rcParams.update({'font.size': 12})
+
+    g= sns.despine(bottom = True, left = True)# Remove all borders
+    '''max_y_lim = max(OecdGraph.Percentage) + .2
+    min_y_lim = min(OecdGraph.Percentage)
+    plt.ylim(min_y_lim, max_y_lim)
+    plt.show()
+    '''

@@ -1,0 +1,96 @@
+
+
+    # import libraries
+    ! pip install xlrd
+
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    %matplotlib inline
+
+    # map to drive
+    from google.colab import drive
+    drive.mount('/content/drive')
+
+Gross Imports (OECD & Non-OECD)
+
+    # import csv
+    df=pd.read_csv('/content/drive/MyDrive/Eggplant Group - The Show - MSDS 455 Data Visualization/EggplantGroup_TheShow_Final_Submission/Data/Gross Imports/oecd_non_oecd_total.csv')
+
+    # check the data
+    df.head()
+
+    # checking dataset
+    df.info()
+
+    #confirm that the correct countries are represented in the dataset
+    df.Country.unique()
+
+    # Create graph
+    plt.figure()
+    sns.set_style("ticks")
+    sns.lineplot(x="Time", y="Value", hue="Country", data=df, palette="husl", errorbar=None).set(title='', xlabel=None ,ylabel="CO2 Emissions (Tons, Millions)")
+    plt.ylim(0, 9.5)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.legend(frameon=False)
+    plt.box(False)
+    #plt.savefig('/content/drive/MyDrive/The Show/OECD_vs_Non.png')
+    plt.savefig('/content/drive/MyDrive/The Show/OECD_vs_Non.svg')
+
+Gross Imports (OECD only)
+
+    # Import first part of the data
+    df_oecd_1=pd.read_csv('/content/drive/MyDrive/Eggplant Group - The Show - MSDS 455 Data Visualization/EggplantGroup_TheShow_Final_Submission/Data/Gross Imports/oecd_only_co2_gross_imports_part1.csv')
+
+    df_oecd_1.head()
+
+    df_oecd_1.info()
+
+    # Check which countries are here
+    df_oecd_1.Country.unique()
+
+    # Import second part of the data
+    df_oecd_2=pd.read_csv('/content/drive/MyDrive/Eggplant Group - The Show - MSDS 455 Data Visualization/EggplantGroup_TheShow_Final_Submission/Data/Gross Imports/oecd_only_co2_gross_imports_part2.csv')
+
+    df_oecd_2.head()
+
+    # Check which countries are here
+    df_oecd_2.Country.unique()
+
+    #Import 3rd part of the data
+    df_oecd_3=pd.read_csv('/content/drive/MyDrive/Eggplant Group - The Show - MSDS 455 Data Visualization/EggplantGroup_TheShow_Final_Submission/Data/Gross Imports/oecd_only_co2_gross_imports_part3.csv')
+
+    df_oecd_3.head()
+
+    ## Check which countries are here
+    df_oecd_3.Country.unique()
+
+    # merge dataset to create new dataframe with all
+    frames = [df_oecd_1, df_oecd_2, df_oecd_3]
+
+    df_oecd_total = pd.concat(frames)
+
+    # remove duplicates
+    df_oecd_total.drop_duplicates()
+
+    df_oecd_total.info()
+
+    # confirm all countries are represented
+    df_oecd_total.Country.unique()
+
+    # create visual
+    plt.figure()
+    sns.set_style("ticks")
+    ax = sns.lineplot(x="Time", y="Value", hue="Country", palette="husl", data=df_oecd_total, errorbar=None)
+    sns.despine()
+    ax.set(xlabel=None,
+           ylabel='CO2 Emissions (Tons, Millions)')
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.legend(bbox_to_anchor=(1.05, 1), loc=2, ncol=2,borderaxespad=0.5, frameon=False)
+    plt.box(False)
+    #plt.savefig('/content/drive/MyDrive/The Show/OECD_countries_gross_imports.png')
+    plt.savefig('/content/drive/MyDrive/The Show/OECD_countries_gross_imports.svg')

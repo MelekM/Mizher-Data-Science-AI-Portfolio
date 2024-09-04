@@ -1,0 +1,291 @@
+﻿Data Dictionary
+
+File Name: Global_Per_Capita_Carbon_Emissions.xlsx
+Document Full Path: Data/Processed Data/OECD Introduction Section/Global_Per_Capita_Carbon_Emissions.xlsx
+Data Source File Full Path if Different: Data/Raw Data/Global Carbon Project/The Global Carbon Budget 2022/National_Fossil_Carbon_Emissions_2022v1.0.xlsx
+Source Link: https://www.globalcarbonproject.org/carbonbudget
+
+Sheet Name: Data_Of_Interest
+- Column Name: Country
+    - Definition: Country Long, Official Name
+    - Data Type: String
+- Column Name: MtC/yr (Millions of Tonnes)
+    - Definition: Emissions in Millions of Tons of Carbon per Year. This strictly refers to the Carbon mass in Carbon Dioxide
+    - Data Type: Float
+- Column Name: MtCO2/yr (Millions of Tonnes)
+    - Definition: Emissions in Millions of Tons of Carbon Dioxide per Year. Calculated from original data per formula provided by the Global Carbon Project
+    - Data Type: Float
+- Column Name: Year
+    - Definition: Data selected included only 2021 Data Population and Emissions Data
+    - Data Type: Integer
+- Column Name: OECD
+    - Definition: OECD Membership Status. Excludes suspended members Russia and Belarus
+    - Data Type: String
+- Column Name: Country Name
+    - Definition: Country Short, Common Name
+    - Data Type: String
+- Column Name: Country Code
+    - Definition: ISO A3 Country Code
+    - Data Type: String
+- Column Name: Population (2021)
+    - Definition: Population per Country as of 2021
+    - Data Type: Integer
+- Column Name: Per Capita MtCO2/year
+    - Definition: Per Capita Emissions in Millions of Tons of Carbon Dioxide per Country
+    - Data Type: Float
+
+Sheet Name: ISO_A3 Code List with Pop
+- Column Name: Country Name
+    - Definition: Country Short, Common Name
+    - Data Type: String
+- Column Name: Country Code
+    - Definition: ISO A3 Country Code
+    - Data Type: String
+- Column Name: Population (2021)
+    - Definition: Population per Country and Region as of 2021
+    - Data Type: Integer
+    
+ File Name: climate-change.csv
+Document Full Path: Data/Climate Change Trends/climate-change.csv
+Data Source File Full Path if Different: N/A
+Source Link: https://ourworldindata.org/co2-and-greenhouse-gas-emissions
+
+- Column Name: Entity
+    - Definition: Region
+    - Data Type: String
+- Column Name: Date
+    - Definition: Date in year, month, day format
+    - Data Type: String
+- Column Name: Seasonal variation
+    - Definition: Seasonal change measurement
+    - Data Type: Float
+- Column Name: Combined measurements
+    - Definition: Combined measurements from various sources
+    - Data Type: Float
+- Column Name: Monthly averaged
+    - Definition: Monthly averaged CO2 concentrations (ppm)
+    - Data Type: Float
+- Column Name: Annual averaged
+    - Definition: Annual averaged CO2 concentrations (ppm)
+    - Data Type: Float
+- Column Name: monthly_sea_surface_temperature_anomaly
+    - Definition: Mean sea surface temperature change for month
+    - Data Type: Float
+- Column Name: Sea surface temp (lower-bound)
+    - Definition: Lower bound (95% confidence interval) of sea surface temperature
+    - Data Type: Float
+- Column Name: Sea surface temp (upper-bound)
+    - Definition: Upper bound (95% confidence interval) of sea surface temperature
+    - Data Type: Float
+- Column Name: Monthly pH measurement
+    - Definition: pH Measurement per month
+    - Data Type: Float
+- Column Name: Annual average
+    - Definition: Average for year
+    - Data Type: Float
+- Column Name: Temperature anomaly
+    - Definition: Temperature change
+    - Data Type: Float
+- Column Name: Church & White
+    - Definition: Church and White global sea level change reconstruction
+    - Data Type: Float
+- Column Name: University of Hawaii
+    - Definition: Measurement from University of Hawaii Sea Level Center
+    - Data Type: Float
+- Column Name: Average
+    - Definition: Overall average
+    - Data Type: Float
+- Column Name: arctic_sea_ice_osisaf
+    - Definition: Arctic Sea Ocean and Sea Ice Satellite Application Facility
+    - Data Type: Float
+- Column Name: Monthly averaged.1
+    - Definition: Monthly averaged temperature
+    - Data Type: Float
+- Column Name: Annual averaged.1
+    - Definition: Annual averaged temperature
+    - Data Type: Float
+- Column Name: Monthly averaged.2
+    - Definition: Monthly averaged sea level
+    - Data Type: Float
+- Column Name: Annual averaged.2
+    - Definition: Annual averaged sea level
+    - Data Type: Float
+    
+File Name: temperature-anomaly.csv
+Document Full Path: Data/Climate Change Trends/temperature-anomaly.csv
+Data Source File Full Path if Different: N/A
+Source Link: https://ourworldindata.org/co2-and-greenhouse-gas-emissions
+
+- Column Name: Entity
+    - Definition: Region
+    - Data Type: String
+- Column Name: Code
+    - Definition: NULL
+    - Data Type: Float
+- Column Name: Year
+    - Definition: Year
+    - Data Type: Integer
+- Column Name: Global average temperature anomaly relative to 1961-1990
+    - Definition: Mean global temperature change relative to reference period baseline
+    - Data Type: Float
+- Column Name: Upper bound (95% confidence interval) of the annual temperature anomaly
+    - Definition: Upper bound of the global temperature change
+    - Data Type: Float
+- Column Name: Lower bound (95% confidence interval) of the annual temperature anomaly
+    - Definition: Lower bound of the global temperature change
+    - Data Type: Float
+
+File Name: sea-level_fig-1.csv
+Document Full Path: Data/Climate Change Trends/.sea-level_fig-1.csv
+Data Source File Full Path if Different: N/A
+Source Link: https://www.epa.gov/climate-indicators/climate-change-indicators-sea-level
+
+- Column Name: Year
+    - Definition: Year
+    - Data Type: Integer
+- Column Name: CSIRO - Adjusted sea level (inches)
+    - Definition: Adjusted sea level from Commonwealth Scientific and Industrial Research Organisation
+    - Data Type: Float
+- Column Name: CSIRO - Lower error bound (inches)
+    - Definition: Lower bound of adjusted sea level from Commonwealth Scientific and Industrial Research Organisation
+    - Data Type: Float
+- Column Name: CSIRO - Upper error bound (inches)
+    - Definition: Upper bound of adjusted sea level from Commonwealth Scientific and Industrial Research Organisation
+    - Data Type: Float
+- Column Name: NOAA - Adjusted sea level (inches)
+    - Definition: Adjusted sea level from National Oceanic and Atmospheric Administration
+    - Data Type: Float
+
+File Name: Total CO2 emission in gross exports.csv
+Document Full Path: Data/Gross Exports/Total CO2 emission in gross exports.csv
+Data Source File Full Path if Different: N/A
+Source Link: https://stats.oecd.org/Index.aspx?DataSetCode=IO_GHG_2021#
+
+- Column Name: Group
+    - Definition: OECD member status
+    - Data Type: String
+- Column Name: Time
+    - Definition: Time in year
+    - Data Type: Integer
+- Column Name: Country
+    - Definition: OECD and Non-OECD countries
+    - Data Type: String
+- Column Name: Value
+    - Definition: CO2 emissions
+    - Data Type: Float
+
+File Name: oecd_non_oecd_total.csv
+Document Full Path: Data/Total Co2 Emission/oecd_non_oecd_total.csv
+Data Source File Full Path if Different: N/A
+Source Link: https://stats.oecd.org/Index.aspx?DataSetCode=IO_GHG_2021#
+
+- Column Name: VAR
+    - Definition: Indicator code
+    - Data Type: String
+- Column Name: Indicator
+    - Definition: Total CO2 emissions embodied in gross imports
+    - Data Type: Object
+- Column Name: COU
+    - Definition: Country code
+    - Data Type: Object
+- Column Name: Country
+    - Definition: Country
+    - Data Type: Object
+- Column Name: PAR
+    - Definition: Partner code
+    - Data Type: Object
+- Column Name: Partner
+    - Definition: Country grouping (i.e., OECD, World, etc.)
+    - Data Type: Object
+- Column Name: IND
+    - Definition: Industry code
+    - Data Type: Object
+- Column Name: Industry
+    - Definition: Industry = Total
+    - Data Type: Object
+- Column Name: TIME
+    - Definition: Year
+    - Data Type: int64
+- Column Name: Time
+    - Definition: Year
+    - Data Type: int64
+- Column Name: Unit Code
+    - Definition: Tons
+    - Data Type: Object
+- Column Name: Unit
+    - Definition: Tons
+    - Data Type: Object
+- Column Name: PowerCode
+    - Definition: Millions
+    - Data Type: Object
+- Column Name: Reference Period
+    - Definition: All values were either null or irrelevant to our analysis
+    - Data Type: float64
+- Column Name: Value
+    - Definition: Numerical value for Total CO2 emissions
+    - Data Type: float64
+- Column Name: Flag Codes
+    - Definition: All values were either null or irrelevant to our analysis
+    - Data Type: float64
+- Column Name: Flags
+    - Definition: All values were either null or irrelevant to our analysis
+    - Data Type: float64
+    
+File Names: oecd_only_co2_gross_imports_part1.csv, oecd_only_co2_gross_imports_part2.csv, oecd_only_co2_gross_imports_part3.csv
+Document Full Paths: Data/Gross Imports/oecd_only_co2_gross_imports_part1.csv, Data/Gross Imports/oecd_only_co2_gross_imports_part2.csv, Data/Gross Imports/oecd_only_co2_gross_imports_part3.csv
+Source Link: https://stats.oecd.org/Index.aspx?DataSetCode=IO_GHG_2021#
+
+- Column Name: VAR
+    - Definition: Indicator code
+    - Data Type: object
+- Column Name: Indicator
+    - Definition: Total CO2 emissions embodied in gross imports
+    - Data Type: object
+- Column Name: COU
+    - Definition: Country code
+    - Data Type: object
+- Column Name: Country
+    - Definition: Country
+    - Data Type: object
+- Column Name: PAR
+    - Definition: Partner code
+    - Data Type: object
+- Column Name: Partner
+    - Definition: Country grouping (i.e. OECD, World, etc.)
+    - Data Type: object
+- Column Name: IND
+    - Definition: Industry code
+    - Data Type: object
+- Column Name: Industry
+    - Definition: Industry = Total
+    - Data Type: object
+- Column Name: TIME
+    - Definition: Year
+    - Data Type: int64
+- Column Name: Time
+    - Definition: Year
+    - Data Type: int64
+- Column Name: Unit Code
+    - Definition: Tons
+    - Data Type: object
+- Column Name: Unit
+    - Definition: Tons
+    - Data Type: object
+- Column Name: PowerCode
+    - Definition: Millions
+    - Data Type: object
+- Column Name: Reference Period
+    - Definition: All values were either null or irrelevant to our analysis
+    - Data Type: float64
+- Column Name: Reference Period
+    - Definition: All values were either null or irrelevant to our analysis
+    - Data Type: float64
+- Column Name: Value
+    - Definition: Numerical value for Total CO2 emissions
+    - Data Type: float64
+- Column Name: Flag Codes
+    - Definition: All values were either null or irrelevant to our analysis
+    - Data Type: float64
+- Column Name: Flags
+    - Definition: All values were either null or irrelevant to our analysis
+    - Data Type: float64

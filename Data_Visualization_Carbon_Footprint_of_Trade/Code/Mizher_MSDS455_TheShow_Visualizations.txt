@@ -1,0 +1,248 @@
+
+
+MSDS 455 Data Visualization
+
+Eggplant Group - The Show
+
+Melek Mizher
+
+Territorial Emission Data for 2021 extracted from The Global Carbon Budget 2022 by the Global Carbon Project
+
+https://www.globalcarbonproject.org/carbonbudget
+
+World Population Data for 2021 extracted from the World Bank https://datacatalog.worldbank.org/search/dataset/0037712
+
+World GeoJSON Data from https://datahub.io/core/geo-countries#data
+
+# Required Dependencies
+
+    #!pip install folium
+    #!pip install geopandas
+    #!pip install openpyxl
+
+Import Required Libraries
+
+    # For DataFrame Structure and Data Manipulation
+    import pandas as pd
+    # For Map Structures
+    import folium
+
+    # To manipulate the GeoJson file
+    import geopandas as gpd
+
+    # To generate legend using HTML
+    from branca.element import Template, MacroElement
+    from folium import LayerControl
+
+    # To navigate system and save HTML maps
+    import os
+
+Import Datasets
+
+    #Find Current Directory for this Notebook
+    code_directory = os.getcwd()
+
+    # Navigate back to the EggplantGroup_MSDS455_TheShow directory. The two dots signify moving one step up the directory.
+    TheShow_directory = os.path.abspath(os.path.join(code_directory, ".."))
+
+    #Local File Access
+    map_data_path = os.path.join(TheShow_directory, 'Data/Raw Data/World Map GeoJson Data/countries.geojson')
+    emissions_data_path = os.path.join(TheShow_directory, 'Data/Processed Data/OECD Introduction Section/Global_Per_Capita_Carbon_Emissions.xlsx')
+
+    #Assigning Links Hosted in Github to Datasets to ensure Dynamic Usability
+    #map_data_url = 'https://raw.githubusercontent.com/MelekM/EggplantGroup_MSDS455_TheShow/7abcb6743208e29386baad6f8da9968ceb5b69b1/Data/countries.geojson'
+    #emissions_data_url = 'https://raw.githubusercontent.com/MelekM/EggplantGroup_MSDS455_TheShow/7abcb6743208e29386baad6f8da9968ceb5b69b1/Data/National_Fossil_Carbon_Emissions_2022v1.0.xlsx'
+
+    #Create Dataframe containing data.
+    #Openpyxl ensures that Pandas reads .xlsx type files correctly.
+    emissions_df = pd.read_excel(emissions_data_path, sheet_name="Data_Of_Interest", engine="openpyxl")
+
+    #Create Dataframe containing world map data for choropleth maps.
+    map_df = gpd.read_file(map_data_path)
+
+    emissions_df
+
+    map_df.head()
+
+    # Erase a Territory
+    #map_df = map_df[map_df["Name"] != "Territory_Name"]
+
+    World = emissions_df.iloc[219]
+
+Excluding World totals from the Dataset that will be Mapped
+
+    emissions_df = emissions_df.iloc[0:219]
+
+    World
+
+Drop Countries or regions that have no data.
+
+    emissions_df = emissions_df.dropna(how='any')
+
+    emissions_df.info()
+
+    #Renaming Column
+    emissions_df = emissions_df.rename(columns={'Country Code': 'ISO_A3'})
+
+Choropleth Maps
+
+Define Percentiles for Choropleth Map
+
+    # Generate a Simple List with Percentiles
+    percentiles_list = emissions_df['Per Capita MtCO2/year'].quantile([0, 0.2, 0.4, 0.6, 0.8, 1]).to_list()
+
+    # Generate a Series with Percentiles
+    percentiles = emissions_df['Per Capita MtCO2/year'].quantile([0, 0.2, 0.4, 0.6, 0.8, 1])
+
+Generate Custom Scale Following Data Percentiles
+
+    #colors = ['#63BFF0', '#A6CBE4', '#D7D7D7', '#E1A495', '#DE6E56']
+
+    #Assigns the Percentile list to the Data as it gets mapped.
+    values = [percentiles[0.2], percentiles[0.4], percentiles[0.6], round(percentiles[0.8],1)]
+
+    #Assigns the Custom Scale to the Map.This has to start from 0 to ensure proper data scaling.
+    custom_scale = percentiles_list
+
+Matching and Merging Data with the GeoJson Map Data for ease of Visualization
+
+    # Matching ISO_A3 values between map data and country list
+    emissions_map_df = map_df.loc[map_df['ISO_A3'].isin(emissions_df['ISO_A3'])]
+
+    # Generating Emissions List
+    emissions_map_code_list = emissions_map_df['ISO_A3'].tolist()
+
+    #Create new filtered emissions dataframe that includes emission data for the previously matched countries
+    filtered_emissions_df = emissions_df.loc[emissions_df['ISO_A3'].isin(emissions_map_code_list)]
+
+    # Merge two dataframes on ISO_A3
+    emissions_map_df = emissions_map_df.merge(filtered_emissions_df, on='ISO_A3', how='inner')
+
+    emissions_map_df
+
+    #Define Map Center, Size, and Style
+    map_1 = folium.Map(location=[0, 0], zoom_start=2, tiles="Stamen Toner Background")
+
+    # Custom HTML Template for the Legend
+    legend_template = """
+    <div style="position: fixed; bottom: 80px; right: 400px; z-index: 1000; background-color: white;
+                 padding: 10px; border: 2px solid grey; font-size: 16px; font-family: 'Roboto', sans-serif;">
+
+        <div style="font-weight: bold; margin-bottom: 5px;">Metric Tons of CO2 Per Capita (2021)</div>
+        <div>
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <div style="width: 20px; height: 20px; background-color: #3d74ae; margin-right: 5px;"></div>
+                <div>Very Low</div>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <div style="width: 20px; height: 20px; background-color: #9cc3dd; margin-right: 5px;"></div>
+                <div>Low</div>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <div style="width: 20px; height: 20px; background-color: #f7f7f7; margin-right: 5px;"></div>
+                <div>Average</div>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <div style="width: 20px; height: 20px; background-color: #eba987; margin-right: 5px;"></div>
+                <div>High</div>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div style="width: 20px; height: 20px; background-color: #bb3a39; margin-right: 5px;"></div>
+                <div>Very High</div>
+            </div>
+        </div>
+
+    </div>
+    """
+
+    # Generating the Legend Element
+    legend = MacroElement()
+    legend._template = Template(legend_template)
+
+    # Add the choropleth and legend to the map
+    folium.Choropleth(
+        geo_data=map_df,
+        name="Metric Tons of CO2 Per Capita (2021)",
+        data=emissions_df,
+        columns=['ISO_A3', 'Per Capita MtCO2/year'],
+        key_on="feature.properties.ISO_A3",
+        threshold_scale=custom_scale,
+        fill_color='RdBu_r',
+        nan_fill_color='transparent',
+        fill_opacity=0.9,
+        line_opacity=0.5
+    ).add_to(map_1)
+
+    #Adding Legend to the Map
+    map_1.get_root().html.add_child(folium.Element(legend_template))
+
+    #Saving the Map as an HTML file
+    map_1.save(os.path.join(TheShow_directory, 'Graphics/Maps/Per Capita MtCO2/PerCapita MtCO2 Stamen Toner Background.html'))
+
+    #This is an extra step that ensures that the legend is added correctly
+    LayerControl().add_to(map_1)
+
+    #Display the Map
+    map_1
+
+OECD Members
+
+    #Renaming the column values for OECD membership to ease assignment
+    map_2_df = emissions_df[["ISO_A3", "OECD"]]
+    map_2_df.loc[:, 'OECD'] = map_2_df['OECD'].apply(lambda x: 1 if x == "Member" else 0)
+
+    print(map_2_df)
+
+    #Selecting only OECD Members
+    map_2_df = map_2_df[map_2_df['OECD']==1]
+
+    map_2_df
+
+    map_2 = folium.Map(location=[0, 0], zoom_start=2, tiles="Stamen Toner Background")
+
+    # Matching ISO_A3 values between map data and OECD members list
+    oecd_members_map_df = map_df.loc[map_df['ISO_A3'].isin(map_2_df['ISO_A3'])]
+
+    # Create a GeoJSON layer with the filtered data
+    oecd_members_layer = folium.GeoJson(
+        data=oecd_members_map_df,
+        name="OECD Member Nations",
+        style_function=lambda feature: {
+            "weight": 0.5,
+            "color": "black",
+            "fillColor": "#63BFF0",
+            "fillOpacity": 0.9
+        } ,
+        tooltip=folium.features.GeoJsonTooltip(fields=['ISO_A3'], labels=True, sticky=True)
+    ).add_to(map_2)
+
+    # Add layer to map
+    #oecd_members_layer.add_to(map_2)
+
+    # Custom HTML Template for the Legend
+    legend_html = """
+    <div style="position: fixed; bottom: 180px; right: 400px; z-index: 1000; background-color: white;
+                 padding: 10px; border: 2px solid grey; font-size: 16px; font-family: 'Roboto', sans-serif;">
+
+        <div style="font-weight: bold; margin-bottom: 5px;">OECD Membership</div>
+        <div style="display: flex; align-items: center;">
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <div style="width: 20px; height: 20px; background-color: #63BFF0; margin-right: 5px;"></div>
+                <div>OECD Member</div>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <div style="width: 20px; height: 20px; background-color: #f7f7f7; margin-right: 5px;"></div>
+                <div>OECD Non-Member</div>
+            </div>
+        </div>
+
+    </div>
+    """
+
+    # Adding legend HTML to the map
+    map_2.get_root().html.add_child(folium.Element(legend_html))
+
+    # Saving map as HTML file to correct file path.
+    map_2.save(os.path.join(TheShow_directory, 'Graphics/Maps/OECD Members/OECD_members Stamen Toner Background.html'))
+
+    map_2

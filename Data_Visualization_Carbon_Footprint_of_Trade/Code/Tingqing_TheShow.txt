@@ -1,0 +1,89 @@
+
+
+##MSDS 455 The Show Tingqing Wu
+OECD and Non-OECD member countries in gross exports
+Data visualization preparation
+
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import io
+    import os
+
+    from google.colab import drive
+    drive.mount('/content/drive')
+
+    #Upload data (csv.) from local drive
+    from google.colab import files
+    uploaded = files.upload()
+
+    # Read the CSV file
+    Exports = pd.read_csv(io.BytesIO(uploaded['Total CO2 Emissions in gross exports.csv']), encoding='unicode_escape')
+
+    Exports.head()
+
+    # Split the countries columns to analyzable column names
+    split_columns = [x.split(":") for x in Exports["Time"]]
+    Exports["PAR"] = [x[0] for x in split_columns]
+    Exports["Country"] = [x[1] for x in split_columns]
+
+    # Print the column names
+    col_name = Exports.columns
+    print(col_name)
+
+    # Subset the data for OECD and NON-OECD to use the latest 10 years of the available data
+    Total_long = Exports[Exports["PAR"].isin(["OECD", "NONOECD"])]
+    Total_long = Total_long[["2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "Country"]]
+
+    # The structure of the downloaded data was in a wide format where the columns was Time. Restructuring the data
+    # Reshape the data structure from wide to long 
+
+    Total_long = Total_long.melt(id_vars=["Country"], var_name="Time", value_name="Value")
+    Total_long["Time"] = Total_long["Time"].str.replace("[^0-9]", "").astype(int)
+    Total_long["Value"] = Total_long["Value"].str.replace(",", "").astype(float)
+
+    #statistics
+    average_by_year = Total_long.groupby(['Time', 'Country'])['Value'].mean()
+    average_by_year
+
+    # Create line plot for OECD vs Non-OECD
+    sns.set_style("ticks")
+    plt.figure(figsize=(8, 6))
+    plt.box(False)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    sns.lineplot(data=Total_long, x="Time", y="Value", hue="Country", palette="husl", errorbar=None)
+    plt.xlabel(None)
+    plt.ylabel("CO2 Emissions (Tons, Millions)", size=12)
+    #plt.title("Total CO2 Emissions Embodied in Gross Exports") # removed title and put as slide header
+    plt.ylim(0, 3500)
+    plt.legend(frameon=False,  loc='lower right')
+    plt.show()
+
+    # Subset the data to look at each OECD country
+    OECD_long = Exports[(Exports["Group"] == "OECD") & (Exports['Country'] != " OECD member countries")]
+    OECD_long = OECD_long[["2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "Country"]]
+
+    # Reshape the data: wide to long
+    OECD_long = OECD_long.melt(id_vars=["Country"], var_name="Time", value_name="Value")
+    OECD_long["Time"] = OECD_long["Time"].str.replace("[^0-9]", "").astype(int)
+    OECD_long["Value"] = OECD_long["Value"].str.replace(",", "").astype(float)
+
+    #statistics
+    average_by_country = OECD_long.groupby(['Country'])['Value'].mean()
+    average_by_country
+
+    # Create line plot for each OECD country
+    sns.set_style("ticks")
+    plt.figure(figsize=(8, 6))
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.box(False)
+    sns.lineplot(data=OECD_long, x="Time", y="Value", hue="Country", palette="husl")
+    plt.xlabel(None)
+    plt.ylabel("CO2 Emissions (Tons, Millions)", size=12)
+    plt.title(None)
+    # Set legend outside the plot
+    plt.legend(frameon=False, ncol=2, loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.ylim(0, 800)
+    plt.show()

@@ -1,0 +1,183 @@
+
+
+Overview Visuals
+
+    # Imports
+    import pandas as pd
+    pd.set_option('display.max_rows', 500)
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.width', 1000)
+    pd.set_option('display.max_colwidth', None)
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
+    import seaborn as sns
+
+    import os
+
+    # Mount Google Drive to Colab
+    from google.colab import drive
+    drive.mount('/content/drive')
+
+View datasets in folder:
+
+    data_path = "/content/drive/My Drive/EggplantGroup_TheShow_Final_Submission/Data/Climate Change Trends/"
+
+    ls "/content/drive/My Drive/EggplantGroup_TheShow_Final_Submission/Data/Climate Change Trends/"
+
+    output_path = "/content/drive/My Drive/EggplantGroup_TheShow_Final_Submission/Graphics/Climate Change Trends/"
+
+Atmospheric CO2 Over Time
+
+Data source: https://ourworldindata.org/co2-and-greenhouse-gas-emissions
+
+    # load dataset
+    atmosphere_df = pd.read_csv(data_path + 'climate-change.csv')
+    atmosphere_df.sample()
+
+    atmosphere_df.dtypes
+
+    atmosphere_df['Monthly averaged'].unique()
+
+    atmosphere_df.shape
+
+    # We want to look at global atmospheric concentrations -- use World
+    atmosphere_df['Entity'].unique()
+
+    # Only keep rows for World
+    atmosphere_df = atmosphere_df[atmosphere_df['Entity']=='World'].copy()
+    atmosphere_df.shape
+
+    # Convert "Date" to datetime
+    atmosphere_df['Date'] = pd.to_datetime(atmosphere_df['Date'])
+
+    # Get year and month as fields
+    atmosphere_df['year'] = atmosphere_df['Date'].dt.year
+    atmosphere_df['month'] = atmosphere_df['Date'].dt.month
+
+    # Date range of entire dataset
+    atmosphere_df.Date.min(), atmosphere_df['Date'].max()
+
+    # Check date range available for "Annual averaged" variable
+    atmosphere_df[~atmosphere_df['Annual averaged'].isnull()].Date.min(), atmosphere_df[~atmosphere_df['Annual averaged'].isnull()].Date.max()
+
+    # Look at monthly averaged CO2 concentrations (in ppm)
+    atmosphere_df['Monthly averaged'].isnull().sum()
+
+    # Look at rows where the 'Monthly averaged' is not null
+    # Multiple rows per year
+    atmosphere_df[~atmosphere_df['Monthly averaged'].isnull()][['Entity', 'Date', 'Monthly averaged']].head()
+
+    # Keep rows where 'Monthly averaged' value is not null
+    atmosphere_df = atmosphere_df[~atmosphere_df['Monthly averaged'].isnull()].copy()
+
+    # Check
+    atmosphere_df.sample()[['Date', 'year', 'month']]
+
+    # What is the date range available?
+    atmosphere_df.Date.min(), atmosphere_df.Date.max()
+
+    # Check:
+    atmosphere_df.Date.min(), atmosphere_df.Date.max()
+
+    # Which months are available for each year?
+    atmosphere_df.groupby('year')['month'].unique()
+
+    atmosphere_df[['Entity', 'Date', 'year', 'month', 'Annual averaged']].head(10)
+
+    # first pass at line chart
+    plt.box(False) # removing frame reduces non-data ink
+    plt.plot(atmosphere_df['Date'], atmosphere_df['Annual averaged'], color="#003BA4") #color in style guide
+    plt.ylabel('Atmospheric CO2 Concentration (ppm)', fontsize=12) #fontsize determined to be legible on screen
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.savefig(output_path + 'co2_concentrations')
+
+Temperature Rising Over Time
+
+Data source: https://ourworldindata.org/co2-and-greenhouse-gas-emissions
+
+    # load dataset
+    temp_df = pd.read_csv(data_path + 'temperature-anomaly.csv')
+    temp_df.sample()
+
+    temp_df.dtypes
+
+    temp_df['Entity'].unique()
+
+    # Only keep rows for 'Global' to look at global temperature
+    temp_df = temp_df[temp_df['Entity']=='Global'].copy()
+
+    temp_df.shape
+
+    temp_df.Year.unique()
+
+    temp_df.sample(10)
+
+    # first pass
+    # line chart
+    plt.plot(temp_df['Year'], temp_df['Global average temperature anomaly relative to 1961-1990'])
+
+    # Which year had the highest temperature?
+    temp_df[temp_df['Global average temperature anomaly relative to 1961-1990']==temp_df['Global average temperature anomaly relative to 1961-1990'].max()]
+
+    # Sort based on temperature change:
+    temp_df.sort_values('Global average temperature anomaly relative to 1961-1990', ascending=False)
+
+    # line chart
+    #plt.figure(figsize=(9,5))
+    plt.box(False)
+    plt.title('Global Mean Surface Temperature Change', fontsize=12)
+    plt.axhline(y=0, color='0.8') #plot horizontal line, indicating zero change from baseline average temperature
+    plt.plot(temp_df['Year'], temp_df['Global average temperature anomaly relative to 1961-1990'], color="#003BA4")
+    plt.ylabel('Difference (°C) from 1961-1990 baseline', fontsize=12)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.savefig(output_path + 'surface_temperatures.png')
+
+Change in Sea Levels Over Time
+
+Source:
+https://www.epa.gov/climate-indicators/climate-change-indicators-sea-level
+
+    sea_df = pd.read_csv(data_path + 'sea-level_fig-1.csv')
+
+    sea_df.sample()
+
+    sea_df.dtypes
+
+    # Check which years CSIRO measure is available
+    mask = ~sea_df['CSIRO - Adjusted sea level (inches)'].isnull()
+    sea_df[mask].Year.min(), sea_df[mask].Year.max()
+
+    # Check which years CSIRO measure is available
+    mask = ~sea_df['NOAA - Adjusted sea level (inches)'].isnull()
+    sea_df[mask].Year.min(), sea_df[mask].Year.max()
+
+There is some overlap, but we will want to show both measures to depict
+the larger date range of 1880 to 2021.
+
+    # How many measurements per year?
+    sea_df.groupby('Year')['CSIRO - Adjusted sea level (inches)'].nunique().value_counts(dropna=False)
+
+    # How many measurements per year?
+    sea_df.groupby('Year')['NOAA - Adjusted sea level (inches)'].nunique().value_counts(dropna=False)
+
+    # first pass
+    plt.box(False)
+    plt.plot(sea_df['Year'], sea_df['CSIRO - Adjusted sea level (inches)'], color="#003BA4")
+    plt.plot(sea_df['Year'], sea_df['NOAA - Adjusted sea level (inches)'])
+    plt.ylabel('Cumulative Sea Level Change (inches)', fontsize=12)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+
+    # final
+    plt.box(False)
+    plt.plot(sea_df['Year'], sea_df['CSIRO - Adjusted sea level (inches)'], color="#003BA4", label='Tide gauge measurements (1880-2013)')
+    plt.plot(sea_df['Year'], sea_df['NOAA - Adjusted sea level (inches)'], label='Satellite measurements (1993-2021)')
+    plt.legend(loc='best') #Add legend to distinguish where each line comes from
+    plt.ylabel('Cumulative Sea Level Change (inches)', fontsize=12)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.savefig(output_path + 'sea_levels.png')
